@@ -53,6 +53,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/loadbalancingexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/logzioexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/metadataexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/mezmoexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/opencensusexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/exporter/parquetexporter"
@@ -313,6 +314,7 @@ func Components() (component.Factories, error) {
 		tanzuobservabilityexporter.NewFactory(),
 		tencentcloudlogserviceexporter.NewFactory(),
 		zipkinexporter.NewFactory(),
+		metadataexporter.NewFactory(),
 	}
 	factories.Exporters, err = component.MakeExporterFactoryMap(exporters...)
 	if err != nil {
