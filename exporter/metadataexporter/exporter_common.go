@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+ * Utility functions to extract metadata from OTEL metrics(For resource data)
+ */
+
 package metadataexporter
 
 import "go.opentelemetry.io/collector/pdata/pcommon"
