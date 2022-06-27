@@ -1,0 +1,28 @@
+[{
+    "metadata": [{
+        "name": "http.server.duration",
+        "description": "measures the duration of the inbound HTTP request",
+        "lastPublishtime": "2022-06-23 18:50:54.630867 +0000 UTC",
+        "dimensions": {
+            "http.flavor": "STRING",
+            "http.host": "STRING",
+            "http.method": "STRING",
+            "http.scheme": "STRING",
+            "http.status_code": "STRING",
+            "http.target": "STRING"
+        }
+    }, {
+        "name": "CustomCounter",
+        "description": "",
+        "lastPublishtime": "2022-06-23 18:50:54.6308693 +0000 UTC",
+        "dimensions": {
+            "sliName": "STRING",
+            "sliVersion": "STRING"
+        }
+    }],
+    "resources": {
+        "service.instance.id": "STRING",
+        "service.name": "STRING",
+        "service.version": "STRING"
+    }
+}]
