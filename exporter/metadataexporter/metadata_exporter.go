@@ -21,6 +21,7 @@ package metadataexporter // import "github.com/open-telemetry/opentelemetry-coll
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"sync"
@@ -43,7 +44,7 @@ func (e *metadataExporter) Capabilities() consumer.Capabilities {
 }
 
 func (e *metadataExporter) ConsumeTraces(_ context.Context, td ptrace.Traces) error {
-	panic("not implemented")
+	return errors.New("not implemented")
 }
 
 func (e *metadataExporter) ConsumeMetrics(_ context.Context, md pmetric.Metrics) error {
@@ -71,7 +72,7 @@ func (e *metadataExporter) ConsumeMetrics(_ context.Context, md pmetric.Metrics)
 }
 
 func (e *metadataExporter) ConsumeLogs(_ context.Context, ld plog.Logs) error {
-	panic("not implemented")
+	return errors.New("not implemented")
 }
 
 func exportMessageAsLine(e *metadataExporter, buf []byte) error {
