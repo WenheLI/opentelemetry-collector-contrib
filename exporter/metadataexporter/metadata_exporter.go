@@ -34,9 +34,10 @@ import (
 )
 
 type metadataExporter struct {
-	path  string
-	file  io.WriteCloser
-	mutex sync.Mutex
+	path         string
+	destinations []string
+	file         io.WriteCloser
+	mutex        sync.Mutex
 }
 
 func (e *metadataExporter) Capabilities() consumer.Capabilities {
@@ -62,6 +63,7 @@ func (e *metadataExporter) ConsumeMetrics(_ context.Context, md pmetric.Metrics)
 		metricMetadata := MetricMetadata{
 			Resources:            resources,
 			MetricMetadataPoints: MetricMetadataPoints,
+			Destinations:         e.destinations,
 		}
 
 		metricMetadataList = append(metricMetadataList, metricMetadata)

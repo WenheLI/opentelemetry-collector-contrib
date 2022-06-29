@@ -24,4 +24,5 @@ type MetricMetadataPoint struct {
 type MetricMetadata struct {
 	MetricMetadataPoints []MetricMetadataPoint `json:"metadata"`
 	Resources            map[string]string     `json:"resources"`
+	Destinations         []string              `json:"destinations"`
 }

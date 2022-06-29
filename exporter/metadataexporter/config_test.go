@@ -43,5 +43,6 @@ func TestLoadConfig(t *testing.T) {
 		&Config{
 			ExporterSettings: config.NewExporterSettings(config.NewComponentIDWithName(typeStr, "2")),
 			Path:             "./filename.json",
+			Destinations:     []string{"file://actualldata.json"},
 		})
 }
