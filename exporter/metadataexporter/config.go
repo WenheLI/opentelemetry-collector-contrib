@@ -32,8 +32,6 @@ type Config struct {
 
 	// Account name for the Purview
 	AccountName string `mapstructure:"account_name"`
-
-	// Container name
 }
 
 var _ config.Exporter = (*Config)(nil)
