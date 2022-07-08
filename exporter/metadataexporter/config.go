@@ -27,10 +27,10 @@ type Config struct {
 	// Destinations. A list of endpoints to which the exporter will send data.
 	Destinations []string `mapstructure:"destinations"`
 
-	// Endpoint for the Azure Blob storage
+	// Endpoint for the Purview
 	Endpoint string `mapstructure:"endpoint"`
 
-	// Account name for the Azure Blob storage
+	// Account name for the Purview
 	AccountName string `mapstructure:"account_name"`
 
 	// Container name
