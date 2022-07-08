@@ -16,12 +16,10 @@ package metadataexporter
 
 import (
 	"context"
-	"encoding/json"
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/collector/component/componenttest"
 
@@ -29,54 +27,54 @@ import (
 )
 
 func TestConsumeTraces(t *testing.T) {
-	f, err := os.CreateTemp("", "*.json")
-	require.NoError(t, err)
-	defer os.Remove(f.Name())
-	exporter := &metadataExporter{
-		path: f.Name(),
-	}
+	exporter := &metadataExporter{}
 
 	require.NotNil(t, exporter)
 	td := testdata.GenerateTracesTwoSpansSameResource()
-	err = exporter.ConsumeTraces(context.Background(), td)
+	err := exporter.ConsumeTraces(context.Background(), td)
 	require.EqualError(t, err, "not implemented")
 }
 
 func TestConsumeLogs(t *testing.T) {
-	f, err := os.CreateTemp("", "*.json")
-	require.NoError(t, err)
-	defer os.Remove(f.Name())
-
-	exporter := &metadataExporter{
-		path: f.Name(),
-	}
+	exporter := &metadataExporter{}
 	require.NotNil(t, exporter)
 	td := testdata.GenerateLogsTwoLogRecordsSameResource()
-	err = exporter.ConsumeLogs(context.Background(), td)
+	err := exporter.ConsumeLogs(context.Background(), td)
 	require.EqualError(t, err, "not implemented")
 }
 
-func TestConsumeMetrics(t *testing.T) {
-	f, err := os.CreateTemp("", "*.json")
-	require.NoError(t, err)
-	defer os.Remove(f.Name())
+// mock a client
+type MockClient struct {
+	mock.Mock
+}
 
+func (m *MockClient) authentication() error {
+	return nil
+}
+
+func (m *MockClient) CheckMetadataType() (bool, error) {
+	return true, nil
+}
+
+func (m *MockClient) CreateMetadataType() (bool, error) {
+	return true, nil
+}
+
+func (m *MockClient) CreateMetadataEntity(entities PurviewEntityBulkType) (bool, error) {
+	return true, nil
+}
+
+func TestConsumeMetrics(t *testing.T) {
+	mockClient := new(MockClient)
 	exporter := &metadataExporter{
-		path:         f.Name(),
 		destinations: []string{"dummyDestination"},
+		endpoint:     "dummyEndpoint",
+		accountName:  "dummyAccountName",
+		client:       mockClient,
 	}
 	require.NotNil(t, exporter)
 	td := testdata.GenerateMetricsTwoMetrics()
 	assert.NoError(t, exporter.Start(context.Background(), componenttest.NewNopHost()))
 	assert.NoError(t, exporter.ConsumeMetrics(context.Background(), td))
 	assert.NoError(t, exporter.Shutdown(context.Background()))
-	buf, err := ioutil.ReadFile(exporter.path)
-	require.NoError(t, err)
-	require.NotEmpty(t, buf)
-
-	var ret []MetricMetadata
-	err = json.Unmarshal(buf, &ret)
-	require.NoError(t, err)
-	require.Equal(t, 1, len(ret))
-	assert.Equal(t, "dummyDestination", ret[0].Destinations[0])
 }

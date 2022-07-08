@@ -47,7 +47,7 @@ var metricExporterTestCases = []MetricExporterTestCase{
 			},
 		}},
 		expected: MetricMetadataPoint{
-			LastPublishtime: pcommon.NewTimestampFromTime(time.Unix(2, 0)).String(),
+			LastPublishtime: pcommon.NewTimestampFromTime(time.Unix(2, 0)).AsTime().UnixMilli(),
 			Dimensions: map[string]string{
 				"dim1": "STRING",
 			},
@@ -70,7 +70,7 @@ var metricExporterTestCases = []MetricExporterTestCase{
 			},
 		},
 		expected: MetricMetadataPoint{
-			LastPublishtime: pcommon.NewTimestampFromTime(time.Unix(2, 0)).String(),
+			LastPublishtime: pcommon.NewTimestampFromTime(time.Unix(2, 0)).AsTime().UnixMilli(),
 			Dimensions: map[string]string{
 				"dim1": "STRING",
 				"dim2": "STRING",

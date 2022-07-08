@@ -24,7 +24,7 @@ func extractResource(resource pcommon.Resource) map[string]string {
 	var data = make(map[string]string)
 	attrs := resource.Attributes()
 	attrs.Range(func(k string, v pcommon.Value) bool {
-		data[k] = v.Type().String()
+		data[k] = v.StringVal()
 		return true
 	})
 	return data

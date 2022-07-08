@@ -20,11 +20,7 @@ package metadataexporter // import "github.com/open-telemetry/opentelemetry-coll
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"io"
-	"os"
-	"sync"
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
@@ -34,10 +30,10 @@ import (
 )
 
 type metadataExporter struct {
-	path         string
 	destinations []string
-	file         io.WriteCloser
-	mutex        sync.Mutex
+	endpoint     string
+	accountName  string
+	client       IPurviewClient
 }
 
 func (e *metadataExporter) Capabilities() consumer.Capabilities {
@@ -69,34 +65,38 @@ func (e *metadataExporter) ConsumeMetrics(_ context.Context, md pmetric.Metrics)
 		metricMetadataList = append(metricMetadataList, metricMetadata)
 	}
 
-	content, _ := json.Marshal(metricMetadataList)
-	return exportMessageAsLine(e, content)
+	purviewEntities := make([]PurviewMetadataEntity, 0)
+
+	for _, metricMetadata := range metricMetadataList {
+		for _, metricMetadataPoint := range metricMetadata.MetricMetadataPoints {
+			purview := NewPurviewEntity(metricMetadataPoint, metricMetadata.Resources, metricMetadata.Destinations)
+			purviewEntities = append(purviewEntities, purview)
+		}
+	}
+	e.client.CreateMetadataEntity(PurviewEntityBulkType{
+		Entities: purviewEntities,
+	})
+	return nil
 }
 
 func (e *metadataExporter) ConsumeLogs(_ context.Context, ld plog.Logs) error {
 	return errors.New("not implemented")
 }
 
-func exportMessageAsLine(e *metadataExporter, buf []byte) error {
-	// Ensure only one write operation happens at a time.
-	e.mutex.Lock()
-	defer e.mutex.Unlock()
-	if _, err := e.file.Write(buf); err != nil {
-		return err
-	}
-	if _, err := io.WriteString(e.file, "\n"); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (e *metadataExporter) Start(context.Context, component.Host) error {
 	var err error
-	e.file, err = os.OpenFile(e.path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	if e.client == nil {
+		e.client, err = NewPurviewClient(e.endpoint, e.accountName)
+	}
+	if err != nil {
+		return err
+	}
+	_, err = e.client.CreateMetadataType()
 	return err
 }
 
 // Shutdown stops the exporter and is invoked during shutdown.
 func (e *metadataExporter) Shutdown(context.Context) error {
-	return e.file.Close()
+	e.client = nil
+	return nil
 }
