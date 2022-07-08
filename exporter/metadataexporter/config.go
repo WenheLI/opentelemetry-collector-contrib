@@ -26,6 +26,9 @@ type Config struct {
 
 	// Path of the file to write to. Path is relative to current directory.
 	Path string `mapstructure:"path"`
+
+	// Destinations. A list of endpoints to which the exporter will send data.
+	Destinations []string `mapstructure:"destinations"`
 }
 
 var _ config.Exporter = (*Config)(nil)
@@ -34,6 +37,10 @@ var _ config.Exporter = (*Config)(nil)
 func (cfg *Config) Validate() error {
 	if cfg.Path == "" {
 		return errors.New("path must be non-empty")
+	}
+
+	if cfg.Destinations == nil || len(cfg.Destinations) == 0 {
+		return errors.New("destinations must be non-empty")
 	}
 
 	return nil

@@ -23,8 +23,8 @@ import (
 	"go.opentelemetry.io/collector/pdata/pmetric"
 )
 
-func _extractNumberDataPoints(dataPoints pmetric.NumberDataPointSlice, metricMetadata *MetricMetadataPoint) error {
-	var lastetTime pcommon.Timestamp = 0
+func _extractNumberDataPoints(dataPoints pmetric.NumberDataPointSlice, metricMetadata *MetricMetadataPoint) {
+	var lastetTime pcommon.Timestamp
 	for i := 0; i < dataPoints.Len(); i++ {
 		dp := dataPoints.At(i)
 		if dp.Timestamp() > lastetTime {
@@ -37,11 +37,11 @@ func _extractNumberDataPoints(dataPoints pmetric.NumberDataPointSlice, metricMet
 		})
 	}
 	metricMetadata.LastPublishtime = lastetTime.String()
-	return nil
+
 }
 
-func _extractHistogramDataPoints(dataPoints pmetric.HistogramDataPointSlice, metricMetadata *MetricMetadataPoint) error {
-	var lastetTime pcommon.Timestamp = 0
+func _extractHistogramDataPoints(dataPoints pmetric.HistogramDataPointSlice, metricMetadata *MetricMetadataPoint) {
+	var lastetTime pcommon.Timestamp
 	for i := 0; i < dataPoints.Len(); i++ {
 		dp := dataPoints.At(i)
 		if dp.Timestamp() > lastetTime {
@@ -54,11 +54,10 @@ func _extractHistogramDataPoints(dataPoints pmetric.HistogramDataPointSlice, met
 		})
 	}
 	metricMetadata.LastPublishtime = lastetTime.String()
-	return nil
 }
 
-func _extractExponentialHistogramDataPoints(dataPoints pmetric.ExponentialHistogramDataPointSlice, metricMetadata *MetricMetadataPoint) error {
-	var lastetTime pcommon.Timestamp = 0
+func _extractExponentialHistogramDataPoints(dataPoints pmetric.ExponentialHistogramDataPointSlice, metricMetadata *MetricMetadataPoint) {
+	var lastetTime pcommon.Timestamp
 	for i := 0; i < dataPoints.Len(); i++ {
 		dp := dataPoints.At(i)
 		if dp.Timestamp() > lastetTime {
@@ -71,24 +70,21 @@ func _extractExponentialHistogramDataPoints(dataPoints pmetric.ExponentialHistog
 		})
 	}
 	metricMetadata.LastPublishtime = lastetTime.String()
-	return nil
 }
 
-func _extractSummaryDataPoints(dataPoints pmetric.SummaryDataPointSlice, metricMetadata *MetricMetadataPoint) error {
-	var lastetTime pcommon.Timestamp = 0
+func _extractSummaryDataPoints(dataPoints pmetric.SummaryDataPointSlice, metricMetadata *MetricMetadataPoint) {
+	var lastetTime pcommon.Timestamp
 	for i := 0; i < dataPoints.Len(); i++ {
 		dp := dataPoints.At(i)
 		if dp.Timestamp() > lastetTime {
 			lastetTime = dp.Timestamp()
 		}
 		dp.Attributes().Range(func(k string, v pcommon.Value) bool {
-			// TODO handle panic
 			metricMetadata.Dimensions[k] = v.Type().String()
 			return true
 		})
 	}
 	metricMetadata.LastPublishtime = lastetTime.String()
-	return nil
 }
 
 func extractMetric(scopeMetrics pmetric.ScopeMetricsSlice) []MetricMetadataPoint {
@@ -112,25 +108,22 @@ func extractMetric(scopeMetrics pmetric.ScopeMetricsSlice) []MetricMetadataPoint
 				Dimensions:  make(map[string]string),
 			}
 
-			var err error
 			switch metric.DataType() {
 			case pmetric.MetricDataTypeGauge:
-				err = _extractNumberDataPoints(metric.Gauge().DataPoints(), &metricMetadata)
+				_extractNumberDataPoints(metric.Gauge().DataPoints(), &metricMetadata)
 			case pmetric.MetricDataTypeSum:
-				err = _extractNumberDataPoints(metric.Sum().DataPoints(), &metricMetadata)
+				_extractNumberDataPoints(metric.Sum().DataPoints(), &metricMetadata)
 			case pmetric.MetricDataTypeHistogram:
-				err = _extractHistogramDataPoints(metric.Histogram().DataPoints(), &metricMetadata)
+				_extractHistogramDataPoints(metric.Histogram().DataPoints(), &metricMetadata)
 			case pmetric.MetricDataTypeExponentialHistogram:
-				err = _extractExponentialHistogramDataPoints(metric.ExponentialHistogram().DataPoints(), &metricMetadata)
+				_extractExponentialHistogramDataPoints(metric.ExponentialHistogram().DataPoints(), &metricMetadata)
 			case pmetric.MetricDataTypeSummary:
-				err = _extractSummaryDataPoints(metric.Summary().DataPoints(), &metricMetadata)
+				_extractSummaryDataPoints(metric.Summary().DataPoints(), &metricMetadata)
 			case pmetric.MetricDataTypeNone:
 				continue
 			}
-			if err == nil {
-				metadataList = append(metadataList, metricMetadata)
-				metadataNameHash[metadataName] = true
-			}
+			metadataList = append(metadataList, metricMetadata)
+			metadataNameHash[metadataName] = true
 		}
 	}
 

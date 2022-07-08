@@ -16,14 +16,16 @@ package metadataexporter
 
 import (
 	"context"
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"testing"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal/testdata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/collector/component/componenttest"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal/testdata"
 )
 
 func TestConsumeTraces(t *testing.T) {
@@ -60,7 +62,8 @@ func TestConsumeMetrics(t *testing.T) {
 	defer os.Remove(f.Name())
 
 	exporter := &metadataExporter{
-		path: f.Name(),
+		path:         f.Name(),
+		destinations: []string{"dummyDestination"},
 	}
 	require.NotNil(t, exporter)
 	td := testdata.GenerateMetricsTwoMetrics()
@@ -70,4 +73,10 @@ func TestConsumeMetrics(t *testing.T) {
 	buf, err := ioutil.ReadFile(exporter.path)
 	require.NoError(t, err)
 	require.NotEmpty(t, buf)
+
+	var ret []MetricMetadata
+	err = json.Unmarshal(buf, &ret)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ret))
+	assert.Equal(t, "dummyDestination", ret[0].Destinations[0])
 }

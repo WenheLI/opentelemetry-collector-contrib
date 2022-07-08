@@ -94,9 +94,8 @@ func TestExtractNumberDataPoints(t *testing.T) {
 		result := MetricMetadataPoint{}
 		result.Dimensions = make(map[string]string)
 
-		err := _extractNumberDataPoints(numberDPs, &result)
+		_extractNumberDataPoints(numberDPs, &result)
 
-		assert.NoError(t, err)
 		assert.Equal(t, testCase.expected, result)
 	}
 }
@@ -115,9 +114,8 @@ func TestExtractHistogramDataPoints(t *testing.T) {
 		result := MetricMetadataPoint{}
 		result.Dimensions = make(map[string]string)
 
-		err := _extractHistogramDataPoints(histogramDPs, &result)
+		_extractHistogramDataPoints(histogramDPs, &result)
 
-		assert.NoError(t, err)
 		assert.Equal(t, testCase.expected, result)
 	}
 }
@@ -136,9 +134,8 @@ func TestExponentialHistogramDataPoints(t *testing.T) {
 		result := MetricMetadataPoint{}
 		result.Dimensions = make(map[string]string)
 
-		err := _extractExponentialHistogramDataPoints(expoDPs, &result)
+		_extractExponentialHistogramDataPoints(expoDPs, &result)
 
-		assert.NoError(t, err)
 		assert.Equal(t, testCase.expected, result)
 	}
 }
@@ -157,9 +154,8 @@ func TestExtractSummaryDataPoints(t *testing.T) {
 		result := MetricMetadataPoint{}
 		result.Dimensions = make(map[string]string)
 
-		err := _extractSummaryDataPoints(summaryDPs, &result)
+		_extractSummaryDataPoints(summaryDPs, &result)
 
-		assert.NoError(t, err)
 		assert.Equal(t, testCase.expected, result)
 	}
 }
