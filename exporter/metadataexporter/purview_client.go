@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 )
@@ -29,8 +30,8 @@ import (
 const (
 	PurviewMetadataTypeName = "Metadata"
 	PurviewTypedefNameAPI   = "/api/atlas/v2/types/typedef/name/"
-	PurviewTypedefAPI       = "/api/atlas/v2/types/typedefs"
-	PurviewEntityAPI        = "/api/atlas/v2/entity/bulk"
+	PurviewTypedefAPI       = "/api/atlas/v2/types/typedefs/"
+	PurviewEntityAPI        = "/api/atlas/v2/entity/bulk/"
 )
 
 type IPurviewClient interface {
@@ -40,8 +41,13 @@ type IPurviewClient interface {
 	authentication() error
 }
 
+// for testing
+type IAZIdentityCredential interface {
+	GetToken(ctx context.Context, opts policy.TokenRequestOptions) (azcore.AccessToken, error)
+}
+
 type PurviewClient struct {
-	identity    *azidentity.DefaultAzureCredential
+	identity    IAZIdentityCredential
 	httpClient  *http.Client
 	endpoint    string
 	accountName string
