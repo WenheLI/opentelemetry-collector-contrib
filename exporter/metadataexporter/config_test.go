@@ -32,7 +32,7 @@ func TestLoadConfig(t *testing.T) {
 	factory := NewFactory()
 	factories.Exporters[typeStr] = factory
 	cfg, err := servicetest.LoadConfigAndValidate(filepath.Join("testdata", "config.yaml"), factories)
-	require.EqualError(t, err, "exporter \"metadata\" has invalid configuration: path must be non-empty")
+	require.EqualError(t, err, "exporter \"metadata\" has invalid configuration: destinations must be non-empty")
 	require.NotNil(t, cfg)
 
 	e0 := cfg.Exporters[config.NewComponentID(typeStr)]
@@ -42,7 +42,8 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, e1,
 		&Config{
 			ExporterSettings: config.NewExporterSettings(config.NewComponentIDWithName(typeStr, "2")),
-			Path:             "./filename.json",
 			Destinations:     []string{"file://actualldata.json"},
+			Endpoint:         "test",
+			AccountName:      "test",
 		})
 }

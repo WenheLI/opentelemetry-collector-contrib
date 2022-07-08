@@ -36,8 +36,8 @@ type TestCase struct {
 }
 
 var testCases = []TestCase{
-	{MockResource{"resource-attr": "resource-attr-val-1"}, ExpectResult{"resource-attr": "STRING"}},
-	{MockResource{"resource-attr": ""}, ExpectResult{"resource-attr": "STRING"}},
+	{MockResource{"resource-attr": "resource-attr-val-1"}, ExpectResult{"resource-attr": "resource-attr-val-1"}},
+	{MockResource{"resource-attr": ""}, ExpectResult{"resource-attr": ""}},
 }
 
 func TestExtractResouce(t *testing.T) {

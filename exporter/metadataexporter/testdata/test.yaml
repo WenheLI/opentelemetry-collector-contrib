@@ -1,28 +1,34 @@
 receivers:
-  nop:
+  otlp:
+    protocols:
+      grpc:
+      http:
 
 processors:
-  nop:
+  batch:
+  memory_limiter:
+    # 75% of maximum memory up to 4G
+    limit_mib: 1536
+    # 25% of limit up to 2G
+    spike_limit_mib: 512
+    check_interval: 5s
 
 exporters:
+  file:
+    path: ./actualldata.json
   metadata:
-  metadata/2:
     # This will write the pipeline data to a JSON file.
     # The data is written in Protobuf JSON encoding
     # (https://developers.google.com/protocol-buffers/docs/proto3#json).
     # Note that there are no compatibility guarantees for this format, since it
     # just a dump of internal structures which can be changed over time.
     # This intended for primarily for debugging Collector without setting up backends.
+    path: ./filename.json
     destinations: ["file://actualldata.json"]
-    endpoint: "test"
-    account_name: "test"
 
 service:
   pipelines:
-    traces:
-      receivers: [nop]
-      processors: [nop]
-      exporters: [metadata]
     metrics:
-      receivers: [nop]
-      exporters: [metadata,metadata/2]
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [metadata,file]
