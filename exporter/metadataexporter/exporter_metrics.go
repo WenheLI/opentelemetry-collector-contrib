@@ -36,7 +36,7 @@ func _extractNumberDataPoints(dataPoints pmetric.NumberDataPointSlice, metricMet
 			return true
 		})
 	}
-	metricMetadata.LastPublishtime = lastetTime.String()
+	metricMetadata.LastPublishtime = lastetTime.AsTime().UnixMilli()
 
 }
 
@@ -53,7 +53,7 @@ func _extractHistogramDataPoints(dataPoints pmetric.HistogramDataPointSlice, met
 			return true
 		})
 	}
-	metricMetadata.LastPublishtime = lastetTime.String()
+	metricMetadata.LastPublishtime = lastetTime.AsTime().UnixMilli()
 }
 
 func _extractExponentialHistogramDataPoints(dataPoints pmetric.ExponentialHistogramDataPointSlice, metricMetadata *MetricMetadataPoint) {
@@ -69,7 +69,7 @@ func _extractExponentialHistogramDataPoints(dataPoints pmetric.ExponentialHistog
 			return true
 		})
 	}
-	metricMetadata.LastPublishtime = lastetTime.String()
+	metricMetadata.LastPublishtime = lastetTime.AsTime().UnixMilli()
 }
 
 func _extractSummaryDataPoints(dataPoints pmetric.SummaryDataPointSlice, metricMetadata *MetricMetadataPoint) {
@@ -84,7 +84,7 @@ func _extractSummaryDataPoints(dataPoints pmetric.SummaryDataPointSlice, metricM
 			return true
 		})
 	}
-	metricMetadata.LastPublishtime = lastetTime.String()
+	metricMetadata.LastPublishtime = lastetTime.AsTime().UnixMilli()
 }
 
 func extractMetric(scopeMetrics pmetric.ScopeMetricsSlice) []MetricMetadataPoint {

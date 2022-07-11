@@ -24,23 +24,30 @@ import (
 type Config struct {
 	config.ExporterSettings `mapstructure:",squash"` // squash ensures fields are correctly decoded in embedded struct
 
-	// Path of the file to write to. Path is relative to current directory.
-	Path string `mapstructure:"path"`
-
 	// Destinations. A list of endpoints to which the exporter will send data.
 	Destinations []string `mapstructure:"destinations"`
+
+	// Endpoint for the Purview
+	Endpoint string `mapstructure:"endpoint"`
+
+	// Account name for the Purview
+	AccountName string `mapstructure:"account_name"`
 }
 
 var _ config.Exporter = (*Config)(nil)
 
 // Validate checks if the exporter configuration is valid
 func (cfg *Config) Validate() error {
-	if cfg.Path == "" {
-		return errors.New("path must be non-empty")
-	}
-
 	if cfg.Destinations == nil || len(cfg.Destinations) == 0 {
 		return errors.New("destinations must be non-empty")
+	}
+
+	if cfg.Endpoint == "" {
+		return errors.New("endpoint must be non-empty")
+	}
+
+	if cfg.AccountName == "" {
+		return errors.New("account_name must be non-empty")
 	}
 
 	return nil
