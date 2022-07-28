@@ -16,12 +16,14 @@ package azureblobexporter // import "github.com/open-telemetry/opentelemetry-col
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	parquetAzblob "github.com/xitongsys/parquet-go-source/azblob"
 	"github.com/xitongsys/parquet-go/parquet"
 	"github.com/xitongsys/parquet-go/writer"
 	"go.opentelemetry.io/collector/component"
@@ -31,14 +33,8 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )
 
-// Marshaler configuration used for marhsaling Protobuf to JSON.
-var tracesMarshaler = ptrace.NewJSONMarshaler()
-var metricsMarshaler = pmetric.NewJSONMarshaler()
-var logsMarshaler = plog.NewJSONMarshaler()
-
 type blobExporter struct {
 	client             *azblob.ContainerClient
-	mutex              sync.Mutex
 	endpoint           string
 	storageAccountName string
 	containerName      string
@@ -49,11 +45,7 @@ func (e *blobExporter) Capabilities() consumer.Capabilities {
 }
 
 func (e *blobExporter) ConsumeTraces(_ context.Context, td ptrace.Traces) error {
-	buf, err := tracesMarshaler.MarshalTraces(td)
-	if err != nil {
-		return err
-	}
-	return exportJSONTo(e, buf)
+	return errors.New("not implemented")
 }
 
 func (e *blobExporter) ConsumeMetrics(_ context.Context, md pmetric.Metrics) error {
@@ -61,11 +53,7 @@ func (e *blobExporter) ConsumeMetrics(_ context.Context, md pmetric.Metrics) err
 }
 
 func (e *blobExporter) ConsumeLogs(_ context.Context, ld plog.Logs) error {
-	buf, err := logsMarshaler.MarshalLogs(ld)
-	if err != nil {
-		return err
-	}
-	return exportJSONTo(e, buf)
+	return errors.New("not implemented")
 }
 
 func exportToParquet(e *blobExporter, md pmetric.Metrics) error {
@@ -74,7 +62,8 @@ func exportToParquet(e *blobExporter, md pmetric.Metrics) error {
 	if err != nil {
 		return err
 	}
-	blobWriter, err := NewAzBlobFileWriter(context.Background(), url, cred)
+	config := azblob.ClientOptions{}
+	blobWriter, err := parquetAzblob.NewAzBlobFileWriter(context.Background(), url, cred, config)
 	if err != nil {
 		return err
 	}
@@ -97,8 +86,12 @@ func exportToParquet(e *blobExporter, md pmetric.Metrics) error {
 			parquetData = append(parquetData, FromMetricsToPareut(metric)...)
 		}
 	}
+
 	for _, metric := range parquetData {
-		content := BuildJSONFrom(metric)
+		content, err := json.Marshal(metric)
+		if err != nil {
+			return err
+		}
 		err = parquetWriter.Write(content)
 		if err != nil {
 			return err
@@ -114,21 +107,6 @@ func exportToParquet(e *blobExporter, md pmetric.Metrics) error {
 		return err
 	}
 	return nil
-}
-
-func exportJSONTo(e *blobExporter, buf []byte) error {
-	// Ensure only one write operation happens at a time.
-	e.mutex.Lock()
-	defer e.mutex.Unlock()
-
-	blob, err := e.client.NewBlockBlobClient(time.Now().String() + ".json")
-	if err != nil {
-		return err
-	}
-	ctx := context.Background()
-	option := azblob.UploadOption{}
-	_, err = blob.UploadBuffer(ctx, buf, option)
-	return err
 }
 
 func (e *blobExporter) Start(context.Context, component.Host) error {

@@ -110,8 +110,7 @@ func processSummaryDataPoints(dps pmetric.SummaryDataPointSlice, name *string) [
 			dimensions[k] = v.AsString()
 			return true
 		})
-		dp.QuantileValues().At(0).Quantile()
-		dp.QuantileValues().At(0).Value()
+
 		quantiles := make([]float64, 0)
 		values := make([]float64, 0)
 		for i := 0; i < dp.QuantileValues().Len(); i++ {
