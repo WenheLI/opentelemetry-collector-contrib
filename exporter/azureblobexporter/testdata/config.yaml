@@ -1,0 +1,31 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+  memory_limiter:
+    # 75% of maximum memory up to 4G
+    limit_mib: 1536
+    # 25% of limit up to 2G
+    spike_limit_mib: 512
+    check_interval: 5s
+
+exporters:
+  azureblob:
+    endpoint: blob.core.windows.net
+    storage_account_name: otelsupport
+    container_name: otel-exporter
+  metadata:
+    destinations: ["otelsupport.blob.core.windows.net/otel-exporter"]
+    endpoint: https://testwenheli.catalog.purview.azure.com
+    account_name: test
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [azureblob, metadata]
