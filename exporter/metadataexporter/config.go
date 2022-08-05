@@ -25,7 +25,7 @@ type Config struct {
 	config.ExporterSettings `mapstructure:",squash"` // squash ensures fields are correctly decoded in embedded struct
 
 	// Destinations. A list of endpoints to which the exporter will send data.
-	Destinations []string `mapstructure:"destinations"`
+	Destinations map[string]map[string]string `mapstructure:"destinations"`
 
 	// Endpoint for the Purview
 	Endpoint string `mapstructure:"endpoint"`

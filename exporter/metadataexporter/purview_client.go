@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
@@ -139,13 +140,15 @@ func (client *PurviewClient) CreateMetadataEntity(entities PurviewEntityBulkType
 	if err != nil {
 		return false, err
 	}
-
+	fmt.Println(string(buf))
 	req, err := client.httpClient.Post(fmt.Sprint(client.endpoint, PurviewEntityAPI),
 		"application/json", bytes.NewBuffer(buf))
 	if err != nil {
 		return false, err
 	}
-
+	defer req.Body.Close()
+	b, _ := io.ReadAll(req.Body)
+	fmt.Println(string(b))
 	if req.StatusCode/100 != 2 {
 		return false, nil
 	}

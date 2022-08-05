@@ -67,7 +67,7 @@ func (m *MockClient) CreateMetadataEntity(entities PurviewEntityBulkType) (bool,
 func TestConsumeMetrics(t *testing.T) {
 	mockClient := new(MockClient)
 	exporter := &metadataExporter{
-		destinations: []string{"dummyDestination"},
+		destinations: map[string]map[string]string{},
 		endpoint:     "dummyEndpoint",
 		accountName:  "dummyAccountName",
 		client:       mockClient,

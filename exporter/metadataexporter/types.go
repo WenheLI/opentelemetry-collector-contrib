@@ -24,24 +24,24 @@ type MetricMetadataPoint struct {
 }
 
 type MetricMetadata struct {
-	MetricMetadataPoints []MetricMetadataPoint `json:"metadata"`
-	Resources            map[string]string     `json:"resources"`
-	Destinations         []string              `json:"destinations"`
+	MetricMetadataPoints []MetricMetadataPoint        `json:"metadata"`
+	Resources            map[string]string            `json:"resources"`
+	Destinations         map[string]map[string]string `json:"destinations"`
 }
 
 type PurviewAttributes struct {
-	QualifiedName     string            `json:"qualifiedName"`
-	Name              string            `json:"name"`
-	Description       string            `json:"description"`
-	PrincipalId       int               `json:"principalId"`
-	LastPublishedTime int64             `json:"lastPublishedTime"`
-	Dimensions        map[string]string `json:"dimensions"`
-	Destinations      []string          `json:"destinations"`
-	ObjectType        string            `json:"objectType"`
-	ServiceName       string            `json:"serviceName"`
-	ServiceGUID       string            `json:"serviceGUID"`
-	SLIName           string            `json:"sliName"`
-	SLIVersion        string            `json:"sliVersion"`
+	QualifiedName     string                       `json:"qualifiedName"`
+	Name              string                       `json:"name"`
+	Description       string                       `json:"description"`
+	PrincipalId       int                          `json:"principalId"`
+	LastPublishedTime int64                        `json:"lastPublishedTime"`
+	Dimensions        map[string]string            `json:"dimensions"`
+	Destinations      map[string]map[string]string `json:"destinations"`
+	ObjectType        string                       `json:"objectType"`
+	ServiceName       string                       `json:"serviceName"`
+	ServiceGUID       string                       `json:"serviceGUID"`
+	SLIName           string                       `json:"sliName"`
+	SLIVersion        string                       `json:"sliVersion"`
 }
 
 type PurviewMetadataEntity struct {
@@ -57,7 +57,7 @@ type PurviewEntityBulkType struct {
 	Entities         []PurviewMetadataEntity `json:"entities"`
 }
 
-func NewPurviewEntity(point MetricMetadataPoint, resource map[string]string, destinations []string) PurviewMetadataEntity {
+func NewPurviewEntity(point MetricMetadataPoint, resource map[string]string, destinations map[string]map[string]string) PurviewMetadataEntity {
 	qualifiedName := fmt.Sprintf("%s-%s", resource["service.name"], point.Name)
 	purviewAttributes := PurviewAttributes{
 		QualifiedName:     qualifiedName,

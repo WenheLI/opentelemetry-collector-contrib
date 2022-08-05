@@ -30,7 +30,7 @@ import (
 )
 
 type metadataExporter struct {
-	destinations []string
+	destinations map[string]map[string]string
 	endpoint     string
 	accountName  string
 	client       IPurviewClient

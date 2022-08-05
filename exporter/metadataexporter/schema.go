@@ -18,17 +18,17 @@ const PurviewMetadataSchema = `{
 	"entityDefs": [
 			{
 				"category": "ENTITY",
-				"version": 1,
+				"version": 2,
 				"name": "metadata",
 				"description": "Metadata for opentelemetry data",
-				"typeVersion": "1.0.0",
+				"typeVersion": "2.0.0",
 				"attributeDefs": [{
 					"name": "destinations",
-					"typeName": "array<string>",
+					"typeName": "map<string,map<string,string>>",
 					"isOptional": true,
-					"cardinality": "LIST",
+					"cardinality": "SINGLE",
 					"valuesMinCount": 0,
-					"valuesMaxCount": 10,
+					"valuesMaxCount": 1,
 					"isUnique": false,
 					"isIndexable": true,
 					"includeInNotification": false
@@ -88,6 +88,26 @@ const PurviewMetadataSchema = `{
 					"isOptional": false,
 					"cardinality": "SINGLE",
 					"valuesMinCount": 1,
+					"valuesMaxCount": 1,
+					"isUnique": false,
+					"isIndexable": true,
+					"includeInNotification": false
+				}, {
+					"name": "isSLI",
+					"typeName": "boolean",
+					"isOptional": false,
+					"cardinality": "SINGLE",
+					"valuesMinCount": 1,
+					"valuesMaxCount": 1,
+					"isUnique": false,
+					"isIndexable": true,
+					"includeInNotification": false
+				}, {
+					"name": "sliDetails",
+					"typeName": "map<string,string>",
+					"isOptional": true,
+					"cardinality": "SINGLE",
+					"valuesMinCount": 0,
 					"valuesMaxCount": 1,
 					"isUnique": false,
 					"isIndexable": true,
