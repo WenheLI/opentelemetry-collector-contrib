@@ -42,7 +42,7 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, e1,
 		&Config{
 			ExporterSettings: config.NewExporterSettings(config.NewComponentIDWithName(typeStr, "2")),
-			Destinations:     []string{"file://actualldata.json"},
+			Destinations:     map[string]map[string]string{},
 			Endpoint:         "test",
 			AccountName:      "test",
 		})

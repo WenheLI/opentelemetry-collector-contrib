@@ -19,6 +19,8 @@ import "fmt"
 type MetricMetadataPoint struct {
 	Name            string            `json:"name"`
 	Description     string            `json:"description"`
+	IsSLI           bool              `json:"isSLI"`
+	SLIDetail       map[string]string `json:"sliDetails"`
 	LastPublishtime int64             `json:"lastPublishtime"`
 	Dimensions      map[string]string `json:"dimensions"` // key dimension name, value dimension data type
 }
@@ -42,6 +44,8 @@ type PurviewAttributes struct {
 	ServiceGUID       string                       `json:"serviceGUID"`
 	SLIName           string                       `json:"sliName"`
 	SLIVersion        string                       `json:"sliVersion"`
+	IsSLI             bool                         `json:"isSLI"`
+	SLIDetails        map[string]string            `json:"sliDetails"`
 }
 
 type PurviewMetadataEntity struct {
@@ -72,6 +76,8 @@ func NewPurviewEntity(point MetricMetadataPoint, resource map[string]string, des
 		SLIVersion:        point.Dimensions["sliVersion"],
 		ServiceName:       resource["service.name"],
 		ServiceGUID:       resource["service.instance.id"],
+		IsSLI:             point.IsSLI,
+		SLIDetails:        point.SLIDetail,
 	}
 
 	// reset to default value if it is empty

@@ -926,3 +926,7 @@ retract v0.37.0 // Contains dependencies on v0.36.0 components, which should hav
 
 // see https://github.com/distribution/distribution/issues/3590
 exclude github.com/docker/distribution v2.8.0+incompatible
+
+replace go.opentelemetry.io/collector => ../tag_define/opentelemetry-collector
+
+replace go.opentelemetry.io/collector/pdata => ../tag_define/opentelemetry-collector/pdata

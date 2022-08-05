@@ -92,7 +92,15 @@ func extractMetric(scopeMetrics pmetric.ScopeMetricsSlice) []MetricMetadataPoint
 	metadataNameHash := make(map[string]bool)
 
 	for i := 0; i < scopeMetrics.Len(); i++ {
-		metrics := scopeMetrics.At(i).Metrics()
+		scopeMetrics := scopeMetrics.At(i)
+		isSLI := scopeMetrics.IsSLI()
+		sliDetailMap := scopeMetrics.SliDetail()
+		sliDetail := make(map[string]string)
+		sliDetailMap.Range((func(k string, v pcommon.Value) bool {
+			sliDetail[k] = v.StringVal()
+			return true
+		}))
+		metrics := scopeMetrics.Metrics()
 		for j := 0; j < metrics.Len(); j++ {
 			metric := metrics.At(j)
 
@@ -106,6 +114,8 @@ func extractMetric(scopeMetrics pmetric.ScopeMetricsSlice) []MetricMetadataPoint
 				Name:        metadataName,
 				Description: metadataDescription,
 				Dimensions:  make(map[string]string),
+				IsSLI:       isSLI,
+				SLIDetail:   sliDetail,
 			}
 
 			switch metric.DataType() {
