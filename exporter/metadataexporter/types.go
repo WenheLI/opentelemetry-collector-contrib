@@ -42,8 +42,6 @@ type PurviewAttributes struct {
 	ObjectType        string                       `json:"objectType"`
 	ServiceName       string                       `json:"serviceName"`
 	ServiceGUID       string                       `json:"serviceGUID"`
-	SLIName           string                       `json:"sliName"`
-	SLIVersion        string                       `json:"sliVersion"`
 	IsSLI             bool                         `json:"isSLI"`
 	SLIDetails        map[string]string            `json:"sliDetails"`
 }
@@ -72,20 +70,10 @@ func NewPurviewEntity(point MetricMetadataPoint, resource map[string]string, des
 		Dimensions:        point.Dimensions,
 		Destinations:      destinations,
 		ObjectType:        "",
-		SLIName:           point.Dimensions["sliName"],
-		SLIVersion:        point.Dimensions["sliVersion"],
 		ServiceName:       resource["service.name"],
 		ServiceGUID:       resource["service.instance.id"],
 		IsSLI:             point.IsSLI,
 		SLIDetails:        point.SLIDetail,
-	}
-
-	// reset to default value if it is empty
-	if purviewAttributes.SLIName == "" {
-		purviewAttributes.SLIName = "default"
-	}
-	if purviewAttributes.SLIVersion == "" {
-		purviewAttributes.SLIVersion = "default"
 	}
 
 	purviewMetadataEntity := PurviewMetadataEntity{

@@ -43,16 +43,6 @@ const PurviewMetadataSchema = `{
 					"isIndexable": true,
 					"includeInNotification": false
 				}, {
-					"name": "sliName",
-					"typeName": "string",
-					"isOptional": false,
-					"cardinality": "SINGLE",
-					"valuesMinCount": 1,
-					"valuesMaxCount": 1,
-					"isUnique": false,
-					"isIndexable": true,
-					"includeInNotification": false
-				}, {
 					"name": "lastPublishedTime",
 					"typeName": "date",
 					"isOptional": false,
@@ -64,16 +54,6 @@ const PurviewMetadataSchema = `{
 					"includeInNotification": false
 				}, {
 					"name": "serviceName",
-					"typeName": "string",
-					"isOptional": false,
-					"cardinality": "SINGLE",
-					"valuesMinCount": 1,
-					"valuesMaxCount": 1,
-					"isUnique": false,
-					"isIndexable": true,
-					"includeInNotification": false
-				}, {
-					"name": "sliVersion",
 					"typeName": "string",
 					"isOptional": false,
 					"cardinality": "SINGLE",
